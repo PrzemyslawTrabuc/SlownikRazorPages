@@ -1,0 +1,109 @@
+﻿@page 
+
+@model Slownik.Pages.IndexModel2
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Witaj w Słowniku</h1>
+<div id="searchbar">
+    <form asp-page="./Index" method="get" style="text-align:left;">
+        <input type="text" class="SearchBox" name="SearchString" value="@Model.SearchString"/>
+        <button type="submit" class="btn"><i class="fa-2x fas fa-search" style="color:rgba(0,123,255,1);"></i></button> <a asp-page="Index">Wróć do spisu</a><br>
+    </form>
+</div>
+<span asp-validation-for="SearchString" class="text-danger" style="font-weight:600;border-radius:5px; font-size:18px"></span>
+<table class="table">
+    @if (Model.Slowa != null)
+    {
+        <thead>
+            <tr>
+                <th><div id="flaga_pl">
+    <a asp-page="./Index" asp-route-sortOrder="@Model.PolskiSort"
+       asp-route-currentFilter="@Model.CurrentFilter" asp-route-SearchString="@Model.SearchString" asp-route-pageIndex="@(Model.Slowa.PageIndex)">
+        @Html.DisplayNameFor(model => model.Slowa[0].Polski).ToString().ToUpper()
+    </a>
+                    </div>
+</th>
+                <th><div id="flaga_uk">
+    <a asp-page="./Index" asp-route-sortOrder="@Model.AngielskiSort"
+       asp-route-currentFilter="@Model.CurrentFilter" asp-route-SearchString="@Model.SearchString" asp-route-pageIndex="@(Model.Slowa.PageIndex)">
+        @Html.DisplayNameFor(model => model.Slowa[0].Angielski).ToString().ToUpper()
+    </a>
+                    </div>
+</th>
+                <th>ZAPISZ</th>
+            </tr>
+        </thead>
+    }
+    <tbody>
+        @if (Model.Slowa != null)
+        {
+            @foreach (var item in Model.Slowa)
+            {
+                <tr style="text-transform: uppercase;">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Polski)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Angielski)
+                    </td>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <td>
+                            <form method="post">
+                                <span class="btn-group pull-right" style="margin-top: 5px">
+                                    <button type="submit" class="btn btn-xs save-btn" asp-page-handler="Save" asp-route-id="@item.Id" style="height: 40px; margin-top: 0px;">
+                                        <i style="color:white;" class="far fa-save"></i>
+                                    </button>
+                                </span>
+                            </form>
+                        </td>
+                    }
+                </tr>
+            }}
+    </tbody>
+</table>
+
+@{if (Model.Slowa.Count >= 1)
+    {
+        var prevDisabled = !Model.Slowa.HasPreviousPage ? "disabled" : "";
+        var nextDisabled = !Model.Slowa.HasNextPage ? "disabled" : "";
+
+
+        <li style="list-style-type:none; font-size:16px">
+            <a asp-route-pageIndex="@(Model.Slowa.PageIndex + 1)" asp-route-currentFilter="@Model.CurrentFilter"
+               class="btn btn-primary @nextDisabled" >
+                Dalej
+            </a>
+
+            @{
+                int startPage = @Model.CurrentPage - 4;
+                int endPage = @Model.CurrentPage + 3;
+                if (startPage <= 0)
+                {
+                    endPage -= (startPage - 1);
+                    startPage = 1;
+                }
+                if (endPage > @Model.TotalPages)
+                {
+                    endPage = @Model.TotalPages;
+                    if (endPage > 8)
+                    {
+                        startPage = endPage - 7;
+                    }
+                }
+
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    <a asp-route-currentFilter="@Model.CurrentFilter" class="btn btn-light page-item @(i == Model.CurrentPage ? "active" : "")" asp-route-pageIndex="@(Model.PageIndex = @i)" asp-route-SearchString="@Model.SearchString" asp-route-sortOrder="@Model.SortOrder">@i</a>
+                }
+            }
+            <a asp-route-pageIndex="@(Model.Slowa.PageIndex - 1)" asp-route-currentFilter="@Model.CurrentFilter"
+               class="btn btn-primary @prevDisabled" asp-route-sortOrder="@Model.SortOrder">
+                Wróć
+            </a>
+        </li>
+    }}
+
+

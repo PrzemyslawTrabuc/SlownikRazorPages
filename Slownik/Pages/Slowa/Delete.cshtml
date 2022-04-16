@@ -1,0 +1,33 @@
+﻿@page
+@model Slownik.Pages.Slowa.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>USUWANIE SŁÓWKA</h1>
+
+<h3>Chcesz usunąć to słówko?</h3>
+<div>    
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Slowa.Polski)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Slowa.Polski)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Slowa.Angielski)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Slowa.Angielski)
+        </dd>
+    </dl>
+    
+    <form method="post">
+        <input type="hidden" asp-for="Slowa.Id" />
+        <input type="submit" value="Usuń" class="btn btn-danger" /><br><br>
+        <a asp-page="./Index">Wróć do spisu</a>
+    </form>
+</div>

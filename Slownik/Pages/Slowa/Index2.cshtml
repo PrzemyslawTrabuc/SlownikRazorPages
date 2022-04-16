@@ -1,0 +1,102 @@
+﻿@page
+
+@model Slownik.Pages.Slowa.IndexModel2
+
+@{
+    ViewData["Title"] = "Product page";
+}
+<script>
+    function myFunction(x) {
+        $("#item_view").modal();
+    };
+    $(document).ready(function () {
+        $("#success-alert").hide();
+        $("#success-alert").fadeTo(2000, 500).slideUp(500, function () {
+            $("#success-alert").slideUp(500);
+        });
+    });
+
+</script>
+@if (@User.Identity.Name != "czemek17@gmail.com")
+{
+    <h3>BRAK UPRAWNIEŃ</h3>
+}
+else
+{
+    <div class="container">
+        <div class="mail-box">
+            <aside class="lg-side">
+                <div class="inbox-head">
+                    <h3>Zarządzaj Słownikiem</h3>
+                    <form method="post">
+                        <label class="labelki">Szukaj słówko</label>
+                        <input class="SearchBox" asp-for="SearchString" />
+                        <button class="btn btn-primary btn-xs">Szukaj Słówka</button>
+                    </form><br>
+                    <a class="btn btn-primary btn-sx" asp-page="/Product/Index">Wszystkie Słówka</a>
+                </div>
+                @if (@User.Identity.Name == "czemek17@gmail.com")
+                {
+                    <a class="btn btn-primary btn-sx pull-left" style="margin-top:20px;margin-bottom: 20px;" asp-page="/Slowa/Add">
+                        <i class="glyphicon glyphicon-plus"></i> Dodaj Słówko
+                    </a>
+                    <br />
+                }
+
+                @if (!string.IsNullOrEmpty(Model.Message))
+                {
+                    <div class="alert alert-success" id="success-alert" style="margin-top: 40px;">
+                        <button type="button" class="close" data-dismiss="alert">x</button>
+                        <strong>@Model.Message ! </strong>
+                    </div>
+                }
+
+
+                <div class="inbox-body" style="margin-top:20px;">
+                    <div class="mail-option">
+
+                        <table class="table table-inbox table-hover" style="border:2px solid black;">
+                            <thead>
+                                <tr class="unread">
+                                    <th class="col-sm-2 view-message  dont-show">ID</th>
+                                    <th class="view-message col-sm-3">Polski</th>
+                                    <th class="col-sm-2">Angielski</th>
+                                    @if (@User.Identity.Name == "czemek17@gmail.com")
+                                    {
+                                        <th class="view-message  text-left col-sm-2">Operacja</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.productList)
+                                {
+                                    <tr>
+                                        <td onclick="myFunction(this)" class="view-message  dont-show"><h5>@item.Id</h5></td>
+                                        <td onclick="myFunction(this)" class="view-message"><h4>@item.Polski.ToUpper()</h4></td>
+                                        <td onclick="myFunction(this)"><h4 style="margin-top: 5px;"><span class="label label-success ">@item.Angielski.ToUpper()</span></h4></td>
+                                        <td>
+                                            @if (@User.Identity.Name == "czemek17@gmail.com")
+                                            {
+                                                <form method="post">
+                                                    <span class="btn-group pull-right" style="margin-top: 5px">
+                                                        <a class="btn btn-warning btn-xs" asp-page="/Slowa/Edit" asp-route-id="@item.Id" style="background-color: green; height: 40px; margin-top: 0px; border:0px solid;">
+                                                            <i class="far fa-edit" style="color:white;"></i>
+                                                        </a>
+
+                                                        <button type="submit" class="btn btn-danger btn-xs" asp-page-handler="Delete" asp-route-id="@item.Id" style="height: 40px; margin-top: 0px;"
+                                                                onclick="return confirm('Usunąć to słówko ze słownika?');">
+                                                            <i class="far fa-trash-alt"></i>
+                                                        </button>
+                                                    </span>
+                                                </form>}
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+}
